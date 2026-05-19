@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text="ذخیره تنظیمات"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="#9B2C2C"
+                android:background="#9B2C2C"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
 
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:text="شروع دانلود"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="#9B2C2C"
+                android:background="#9B2C2C"
                 android:textColor="#FFFFFF"/>
 
             <ProgressBar
@@ -135,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:text="پاک کردن لاگ"
                 android:layout_gravity="end"
-                android:backgroundTint="#333333"
+                android:background="#333333"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
 

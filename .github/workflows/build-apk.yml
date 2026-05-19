@@ -21,9 +21,32 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip3 install --upgrade buildozer cython virtualenv
 
-      - name: Build with Buildozer
+      - name: First Buildozer run (to install SDK, ignore failure)
+        continue-on-error: true
         run: |
-          buildozer -v android debug   # ← no buildozer init
+          buildozer -v android debug
+
+      - name: Accept Android SDK licenses
+        run: |
+          # Find sdkmanager (usually installed by Buildozer)
+          SDKMANAGER=$(find ~/.buildozer -name "sdkmanager" -type f 2>/dev/null | head -1)
+          if [ -n "$SDKMANAGER" ]; then
+            echo "Accepting all licenses using $SDKMANAGER..."
+            yes | $SDKMANAGER --licenses
+          else
+            echo "sdkmanager not found. Installing cmdline-tools manually..."
+            mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+            cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
+            wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+            unzip -q commandlinetools-linux-11076708_latest.zip
+            mv cmdline-tools latest/
+            rm commandlinetools-linux-11076708_latest.zip
+            yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          fi
+
+      - name: Final Buildozer run
+        run: |
+          buildozer -v android debug
 
       - name: Upload APK to artifacts
         uses: actions/upload-artifact@v4

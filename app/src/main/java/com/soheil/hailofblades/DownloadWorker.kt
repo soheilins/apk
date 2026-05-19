@@ -8,19 +8,18 @@ import com.soheil.hailofblades.models.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
-import java.net.Proxy
 import java.net.InetSocketAddress
+import java.net.Proxy
 import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 
-class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
@@ -84,7 +83,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
                         }
                     }
                     completed = true
-                    break
+                    return@repeat
                 }
                 delay(10000)
                 val progress = 10 + (attempt * 0.5).toInt().coerceAtMost(70)

@@ -55,6 +55,8 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         logText = findViewById(R.id.logText)
         val clearLogButton = findViewById<Button>(R.id.clearLogButton)
+        val telegramLink = findViewById<TextView>(R.id.telegramLink)
+        val githubLink = findViewById<TextView>(R.id.githubLink)
 
         logText.movementMethod = ScrollingMovementMethod()
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -62,11 +64,21 @@ class MainActivity : AppCompatActivity() {
 
         clearLogButton.setOnClickListener { logText.text = "" }
 
+        telegramLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Hailofblades"))
+            startActivity(intent)
+        }
+
+        githubLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soheilditf5-svg"))
+            startActivity(intent)
+        }
+
         startButton.setOnClickListener {
             saveSettings()
             val url = urlInput.text.toString().trim()
             if (url.isEmpty()) {
-                log("Please enter a file URL", true)
+                log("لطفاً آدرس فایل را وارد کنید", true)
                 return@setOnClickListener
             }
             if (!hasStoragePermission()) {
@@ -81,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadSavedSettings() {
         tokenInput.setText(prefs.getString(KEY_TOKEN, ""))
-        ownerInput.setText(prefs.getString(KEY_OWNER, "soheilins"))
+        ownerInput.setText(prefs.getString(KEY_OWNER, ""))   // empty by default
         repoInput.setText(prefs.getString(KEY_REPO, "directandyt"))
         proxyInput.setText(prefs.getString(KEY_PROXY, ""))
     }
@@ -94,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             putString(KEY_PROXY, proxyInput.text.toString().trim())
             apply()
         }
-        log("Settings saved", false)
+        log("تنظیمات ذخیره شد", false)
     }
 
     private fun hasStoragePermission(): Boolean {
@@ -128,9 +140,9 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                log("Storage permission granted", false)
+                log("دسترسی به حافظه داده شد", false)
             } else {
-                log("Storage permission denied – cannot save files", true)
+                log("دسترسی به حافظه رد شد – نمی‌توان فایل را ذخیره کرد", true)
             }
         }
     }
@@ -139,21 +151,19 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
             if (hasStoragePermission()) {
-                log("Full storage access granted", false)
+                log("دسترسی کامل به حافظه داده شد", false)
             } else {
-                log("Storage permission denied – please grant to save files", true)
+                log("دسترسی به حافظه رد شد – لطفاً اجازه دهید", true)
             }
         }
     }
 
     private fun checkPermissions() {
-        // Request notification permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
             }
         }
-        // Storage permission will be asked when user clicks start
     }
 
     private fun startDownload() {
@@ -163,6 +173,11 @@ class MainActivity : AppCompatActivity() {
         val proxy = proxyInput.text.toString().trim().takeIf { it.isNotEmpty() }
         val fileUrl = urlInput.text.toString().trim()
         val customFilename = filenameInput.text.toString().trim()
+
+        if (token.isEmpty() || owner.isEmpty() || repo.isEmpty()) {
+            log("لطفاً توکن، مالک و نام مخزن را وارد کنید", true)
+            return
+        }
 
         val data = androidx.work.Data.Builder()
             .putString("token", token)
@@ -191,13 +206,13 @@ class MainActivity : AppCompatActivity() {
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         progressBar.visibility = View.GONE
-                        log("✅ Download complete! File saved to hob_downloaded/", false)
+                        log("✅ دانلود کامل شد! فایل در پوشه hob_downloaded ذخیره شد", false)
                         sendNotification()
                     }
                     WorkInfo.State.FAILED -> {
                         progressBar.visibility = View.GONE
-                        val error = info.outputData.getString("error") ?: "Unknown error"
-                        log("❌ Failed: $error", true)
+                        val error = info.outputData.getString("error") ?: "خطای ناشناخته"
+                        log("❌ شکست: $error", true)
                     }
                     else -> {}
                 }
@@ -230,8 +245,8 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
         val notification = androidx.core.app.NotificationCompat.Builder(this, "download_channel")
-            .setContentTitle("Hail of Blades")
-            .setContentText("File download completed!")
+            .setContentTitle("HOB")
+            .setContentText("دانلود فایل با موفقیت انجام شد!")
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
             .build()
         notificationManager.notify(1, notification)

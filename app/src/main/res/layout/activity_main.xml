@@ -50,7 +50,7 @@
                     android:inputType="textPassword"
                     android:hint="ghp_..."
                     android:textColor="@color/textPrimary"
-                    android:hintTextColor="@color/textSecondary"/>
+                    android:textColorHint="@color/textSecondary"/>
 
                 <TextView android:text="مالک ریپازیتوری" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
                 <EditText
@@ -58,7 +58,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"/>
 
                 <TextView android:text="نام ریپازیتوری" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
                 <EditText
@@ -66,7 +67,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="directandyt"
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"/>
 
                 <TextView android:text="پروکسی (اختیاری)" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
                 <EditText
@@ -74,7 +76,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="http://proxy:8080"
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"/>
 
                 <Button
                     android:id="@+id/saveSettingsButton"
@@ -115,7 +118,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="https://..."
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"/>
 
                 <TextView android:text="نام فایل خروجی (اختیاری)" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
                 <EditText
@@ -123,7 +127,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="مثال: myvideo.mp4 — حتماً پسوند را وارد کنید"
-                    android:textColor="@color/textPrimary"/>
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"/>
 
                 <Button
                     android:id="@+id/startButton"
@@ -207,7 +212,8 @@
                 android:text="📱 @Hailofblades"
                 android:textColor="#0088cc"
                 android:padding="8dp"
-                android:clickable="true" />
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,7 +228,8 @@
                 android:text="🐙 GitHub"
                 android:textColor="#AAAAAA"
                 android:padding="8dp"
-                android:clickable="true" />
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
 
     </LinearLayout>

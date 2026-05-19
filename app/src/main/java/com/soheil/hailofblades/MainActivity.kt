@@ -2,10 +2,14 @@ package com.soheil.hailofblades
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.*
@@ -13,11 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.*
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -39,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_OWNER = "repo_owner"
         private const val KEY_REPO = "repo_name"
         private const val KEY_PROXY = "proxy"
+        private const val REQUEST_CODE_MANAGE_STORAGE = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,8 +69,8 @@ class MainActivity : AppCompatActivity() {
                 log("Please enter a file URL", true)
                 return@setOnClickListener
             }
-            if (!hasPermissions()) {
-                requestPermissions()
+            if (!hasStoragePermission()) {
+                requestStoragePermission()
                 return@setOnClickListener
             }
             startDownload()
@@ -97,45 +97,63 @@ class MainActivity : AppCompatActivity() {
         log("Settings saved", false)
     }
 
-    private fun hasPermissions(): Boolean {
-        val permissions = mutableListOf(
-            Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-        return permissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+    private fun hasStoragePermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         }
     }
 
-    private fun requestPermissions() {
-        Dexter.withContext(this)
-            .withPermissions(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.POST_NOTIFICATIONS
+    private fun requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.data = Uri.parse("package:$packageName")
+                startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE)
+            } catch (e: Exception) {
+                val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE)
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
+                REQUEST_CODE_MANAGE_STORAGE
             )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (report.areAllPermissionsGranted()) {
-                        log("All permissions granted", false)
-                    } else {
-                        log("Storage permissions denied – cannot save file", true)
-                    }
-                }
-                override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                log("Storage permission granted", false)
+            } else {
+                log("Storage permission denied – cannot save files", true)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
+            if (hasStoragePermission()) {
+                log("Full storage access granted", false)
+            } else {
+                log("Storage permission denied – please grant to save files", true)
+            }
+        }
     }
 
     private fun checkPermissions() {
-        if (!hasPermissions()) {
-            requestPermissions()
+        // Request notification permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
+            }
         }
+        // Storage permission will be asked when user clicks start
     }
 
     private fun startDownload() {
@@ -146,7 +164,7 @@ class MainActivity : AppCompatActivity() {
         val fileUrl = urlInput.text.toString().trim()
         val customFilename = filenameInput.text.toString().trim()
 
-        val data = Data.Builder()
+        val data = androidx.work.Data.Builder()
             .putString("token", token)
             .putString("owner", owner)
             .putString("repo", repo)

@@ -34,17 +34,14 @@
                 android:textSize="18sp"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
-                android:text="توکن گیت‌هاب"
-                android:textColor="#B0B0B0" />
+            <TextView android:text="توکن گیت‌هاب" android:textColor="#B0B0B0" />
             <EditText
                 android:id="@+id/tokenInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:hint="ghp_..."
-                android:textColor="#FFFFFF"
-                android:textColorHint="#B0B0B0" />
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:text="مالک ریپازیتوری"
@@ -102,9 +99,7 @@
                 android:textSize="18sp"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
-                android:text="آدرس فایل (URL)"
-                android:textColor="#B0B0B0" />
+            <TextView android:text="آدرس فایل (URL)" android:textColor="#B0B0B0" />
             <EditText
                 android:id="@+id/urlInput"
                 android:layout_width="match_parent"
@@ -157,7 +152,7 @@
                 android:layout_gravity="end" />
         </LinearLayout>
 
-        <!-- بخش مدیریت پوشه‌ها -->
+        <!-- مدیریت پوشه‌ها -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -173,7 +168,7 @@
                 android:text="مدیریت پوشه‌های قدیمی در ریپازیتوری" />
         </LinearLayout>
 
-        <!-- لینک‌های پایین -->
+        <!-- لینک‌ها -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -208,6 +203,5 @@
                 android:clickable="true"
                 android:focusable="true" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

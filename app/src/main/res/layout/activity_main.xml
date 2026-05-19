@@ -19,7 +19,7 @@
             android:paddingBottom="16dp" />
 
         <TextView
-            android:text="GitHub Token"
+            android:text="توکن گیت‌هاب"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
@@ -30,7 +30,7 @@
             android:hint="ghp_..." />
 
         <TextView
-            android:text="Repo Owner"
+            android:text="مالک مخزن (خالی بماند اگر نمی‌دانید)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
@@ -38,10 +38,10 @@
             android:id="@+id/ownerInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="soheilins" />
+            android:text="" />
 
         <TextView
-            android:text="Repo Name"
+            android:text="نام مخزن"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
@@ -52,7 +52,7 @@
             android:text="directandyt" />
 
         <TextView
-            android:text="Proxy (optional, e.g. http://proxy:8080)"
+            android:text="پروکسی (اختیاری، مثال: http://proxy:8080)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
@@ -60,10 +60,10 @@
             android:id="@+id/proxyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Leave empty for no proxy" />
+            android:hint="در صورت نیاز وارد کنید" />
 
         <TextView
-            android:text="File URL"
+            android:text="آدرس فایل (URL)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
@@ -74,7 +74,7 @@
             android:hint="https://..." />
 
         <TextView
-            android:text="Output filename (optional)"
+            android:text="نام فایل خروجی (اختیاری)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp" />
@@ -82,13 +82,13 @@
             android:id="@+id/filenameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Leave empty to auto-detect" />
+            android:hint="مثال: myvideo.mp4 — حتماً پسوند (format) را وارد کنید" />
 
         <Button
             android:id="@+id/startButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start Download"
+            android:text="شروع دانلود"
             android:layout_marginTop="16dp" />
 
         <ProgressBar
@@ -113,8 +113,43 @@
             android:id="@+id/clearLogButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clear Log"
+            android:text="پاک کردن لاگ"
             android:layout_gravity="end" />
+
+        <!-- Bottom links -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/telegramLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📱 @Hailofblades"
+                android:textColor="#0088cc"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  |  " />
+
+            <TextView
+                android:id="@+id/githubLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🐙 GitHub"
+                android:textColor="#333333"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

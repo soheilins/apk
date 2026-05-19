@@ -8,7 +8,5 @@
         <item name="colorOnPrimary">@color/textPrimary</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/textPrimary</item>
-        <item name="colorSecondary">@color/accentRuneLight</item>
-        <item name="colorOnSecondary">@color/textPrimary</item>
     </style>
 </resources>

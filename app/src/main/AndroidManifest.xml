@@ -12,6 +12,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="HOB"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
         <activity

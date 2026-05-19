@@ -7,12 +7,16 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.concurrent.TimeUnit
 
@@ -159,7 +163,6 @@ class MainActivity : AppCompatActivity() {
 
         WorkManager.getInstance(this).enqueue(workRequest)
 
-        // Observe progress
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(workRequest.id)
             .observe(this) { info ->
                 when (info.state) {
@@ -188,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             logText.append("$prefix$msg\n")
             val scrollView = logText.parent as? android.widget.ScrollView
-            scrollView?.fullScroll(android.view.View.FOCUS_DOWN)
+            scrollView?.fullScroll(View.FOCUS_DOWN)
         }
     }
 

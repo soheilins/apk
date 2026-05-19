@@ -1,45 +1,207 @@
-name: Build Android APK (Manual)
+name: Create Android Project Structure (Placeholders)
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to create the structure on (default: main)'
+        required: false
+        default: 'main'
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  create-structure:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
 
-      - name: Install Buildozer dependencies
+      - name: Create folder structure and placeholder files
         run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip3 install --upgrade buildozer cython virtualenv
+          # Create directories
+          mkdir -p app/src/main/java/com/soheil/hailofblades/models
+          mkdir -p app/src/main/java/com/soheil/hailofblades/utils
+          mkdir -p app/src/main/res/layout
+          mkdir -p app/src/main/res/mipmap-hdpi
+          mkdir -p app/src/main/res/mipmap-mdpi
+          mkdir -p app/src/main/res/mipmap-xhdpi
+          mkdir -p app/src/main/res/mipmap-xxhdpi
+          mkdir -p app/src/main/res/mipmap-xxxhdpi
+          mkdir -p .github/workflows
 
-      - name: Install Android cmdline-tools (sdkmanager)
+          # === Placeholder files (you will replace content manually) ===
+
+          # Project-level build.gradle
+          cat > build.gradle << 'EOF'
+          // Top-level build file where you can add configuration options common to all sub-projects.
+          plugins {
+              id 'com.android.application' version '8.2.0' apply false
+              id 'org.jetbrains.kotlin.android' version '1.9.20' apply false
+          }
+          task clean(type: Delete) {
+              delete rootProject.buildDir
+          }
+          EOF
+
+          # settings.gradle
+          cat > settings.gradle << 'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "HailOfBlades"
+          include ':app'
+          EOF
+
+          # gradle.properties
+          cat > gradle.properties << 'EOF'
+          org.gradle.jvmargs=-Xmx2048m
+          android.useAndroidX=true
+          android.enableJetifier=true
+          EOF
+
+          # app/build.gradle
+          cat > app/build.gradle << 'EOF'
+          plugins {
+              id 'com.android.application'
+              id 'org.jetbrains.kotlin.android'
+          }
+          android {
+              namespace 'com.soheil.hailofblades'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.soheil.hailofblades"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0"
+              }
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = '17'
+              }
+          }
+          dependencies {
+              implementation 'androidx.core:core-ktx:1.12.0'
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+              implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+              // Add your dependencies here
+          }
+          EOF
+
+          # AndroidManifest.xml
+          cat > app/src/main/AndroidManifest.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:allowBackup="true"
+                  android:icon="@mipmap/ic_launcher"
+                  android:label="Hail of Blades"
+                  android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          # activity_main.xml (placeholder)
+          cat > app/src/main/res/layout/activity_main.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="16dp">
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="Hail of Blades – Replace with your layout" />
+          </LinearLayout>
+          EOF
+
+          # MainActivity.kt (placeholder)
+          mkdir -p app/src/main/java/com/soheil/hailofblades
+          cat > app/src/main/java/com/soheil/hailofblades/MainActivity.kt << 'EOF'
+          package com.soheil.hailofblades
+          import androidx.appcompat.app.AppCompatActivity
+          import android.os.Bundle
+          class MainActivity : AppCompatActivity() {
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  setContentView(R.layout.activity_main)
+              }
+          }
+          EOF
+
+          # DownloadWorker.kt (placeholder)
+          cat > app/src/main/java/com/soheil/hailofblades/DownloadWorker.kt << 'EOF'
+          package com.soheil.hailofblades
+          import android.content.Context
+          import androidx.work.CoroutineWorker
+          import androidx.work.WorkerParameters
+          class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
+              override suspend fun doWork(): Result {
+                  // TODO: Implement download logic
+                  return Result.success()
+              }
+          }
+          EOF
+
+          # GitHubApi.kt (placeholder)
+          cat > app/src/main/java/com/soheil/hailofblades/GitHubApi.kt << 'EOF'
+          package com.soheil.hailofblades
+          import retrofit2.http.*
+          interface GitHubApi {
+              // Add API methods here
+          }
+          EOF
+
+          # GitHubModels.kt (placeholder)
+          cat > app/src/main/java/com/soheil/hailofblades/models/GitHubModels.kt << 'EOF'
+          package com.soheil.hailofblades.models
+          data class PlaceholderModel(val id: Int, val name: String)
+          EOF
+
+          # Placeholder icon (a small transparent pixel) to satisfy build
+          # Create a minimal 96x96 PNG (1x1 pixel) – base64 encoded tiny image
+          echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
+          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-mdpi/
+          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-xhdpi/
+          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-xxhdpi/
+          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-xxxhdpi/
+
+      - name: Commit and push changes
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
-          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q commandlinetools-linux-11076708_latest.zip
-          mv cmdline-tools latest
-          rm commandlinetools-linux-11076708_latest.zip
-          echo "y" | ./latest/bin/sdkmanager --licenses
-          # Also set environment variables for Buildozer
-          echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Build with Buildozer
-        run: |
-          buildozer -v android debug
-
-      - name: Upload APK to artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: HailOfBlades-APK
-          path: bin/*.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Create Android project structure (placeholders)" || echo "No changes to commit"
+          git push origin ${{ github.event.inputs.branch }}

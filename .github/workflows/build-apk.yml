@@ -21,30 +21,20 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip3 install --upgrade buildozer cython virtualenv
 
-      - name: First Buildozer run (to install SDK, ignore failure)
-        continue-on-error: true
+      - name: Install Android cmdline-tools (sdkmanager)
         run: |
-          buildozer -v android debug
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q commandlinetools-linux-11076708_latest.zip
+          mv cmdline-tools latest
+          rm commandlinetools-linux-11076708_latest.zip
+          echo "y" | ./latest/bin/sdkmanager --licenses
+          # Also set environment variables for Buildozer
+          echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Accept Android SDK licenses
-        run: |
-          # Find sdkmanager (usually installed by Buildozer)
-          SDKMANAGER=$(find ~/.buildozer -name "sdkmanager" -type f 2>/dev/null | head -1)
-          if [ -n "$SDKMANAGER" ]; then
-            echo "Accepting all licenses using $SDKMANAGER..."
-            yes | $SDKMANAGER --licenses
-          else
-            echo "sdkmanager not found. Installing cmdline-tools manually..."
-            mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-            cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
-            wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-            unzip -q commandlinetools-linux-11076708_latest.zip
-            mv cmdline-tools latest/
-            rm commandlinetools-linux-11076708_latest.zip
-            yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          fi
-
-      - name: Final Buildozer run
+      - name: Build with Buildozer
         run: |
           buildozer -v android debug
 

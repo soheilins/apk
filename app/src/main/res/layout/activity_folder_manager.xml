@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background"
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="مدیریت پوشه‌های قدیمی"
+        android:text="Manage Old Folders"
         android:textSize="20sp"
-        android:textColor="@color/accentRune"
         android:layout_marginBottom="16dp" />
 
     <ProgressBar
@@ -23,11 +22,13 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:id="@+id/foldersContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+
     </ScrollView>
 
 </LinearLayout>

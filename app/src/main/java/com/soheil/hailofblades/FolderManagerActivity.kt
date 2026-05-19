@@ -6,6 +6,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.card.MaterialCardView
+import com.soheil.hailofblades.models.GitHubContentItem   // ← اضافه شد
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,7 +21,6 @@ class FolderManagerActivity : AppCompatActivity() {
     private lateinit var api: GitHubApi
     private lateinit var container: LinearLayout
     private lateinit var progressBar: ProgressBar
-    private val folderItems = mutableListOf<Pair<String, View>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +87,7 @@ class FolderManagerActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply { bottomMargin = 12 }
-                cardCornerRadius = 12f
+                setCardCornerRadius(12f)   // ← جایگزین cardCornerRadius
                 setCardBackgroundColor(getColor(R.color.surface))
             }
             val innerLayout = LinearLayout(this).apply {

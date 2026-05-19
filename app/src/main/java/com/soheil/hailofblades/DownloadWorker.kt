@@ -3,7 +3,6 @@ package com.soheil.hailofblades
 import android.content.Context
 import android.os.Environment
 import androidx.work.*
-import com.google.gson.Gson
 import com.soheil.hailofblades.models.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -30,7 +29,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
             val fileUrl = inputData.getString("fileUrl") ?: return@withContext Result.failure()
             val customFilename = inputData.getString("customFilename") ?: ""
 
-            setProgress(workDataOf("progress" to 0))
+            setProgress(Data.Builder().putInt("progress", 0).build())
 
             // 1. Build Retrofit client (with optional proxy)
             val okHttpBuilder = OkHttpClient.Builder()
@@ -59,7 +58,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
 
             // 2. Generate folder name (timestamp)
             val folderName = java.text.SimpleDateFormat("MMddHHmmss", java.util.Locale.getDefault()).format(java.util.Date())
-            setProgress(workDataOf("progress" to 5))
+            setProgress(Data.Builder().putInt("progress", 5).build())
 
             // 3. Trigger workflow
             val dispatchBody = WorkflowDispatchRequest("main", mapOf("file_url" to fileUrl, "folder_name" to folderName))
@@ -67,7 +66,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
             if (!dispatchResponse.isSuccessful) {
                 return@withContext Result.failure(workDataOf("error" to "Failed to trigger workflow: ${dispatchResponse.code()}"))
             }
-            setProgress(workDataOf("progress" to 10))
+            setProgress(Data.Builder().putInt("progress", 10).build())
 
             // 4. Wait for _complete.txt
             var originalFilename = "reassembled.bin"
@@ -87,11 +86,11 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 }
                 delay(10000)
                 val progress = 10 + (attempt * 0.5).toInt().coerceAtMost(70)
-                setProgress(workDataOf("progress" to progress))
+                setProgress(Data.Builder().putInt("progress", progress).build())
             }
             if (!completed) return@withContext Result.failure(workDataOf("error" to "Workflow timed out"))
 
-            setProgress(workDataOf("progress" to 80))
+            setProgress(Data.Builder().putInt("progress", 80).build())
 
             // 5. Download repo ZIP
             val zipResponse = api.downloadRepoZip(owner, repo)
@@ -145,10 +144,10 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
             tempZip.delete()
             extractDir.deleteRecursively()
 
-            setProgress(workDataOf("progress" to 100))
+            setProgress(Data.Builder().putInt("progress", 100).build())
             Result.success()
         } catch (e: Exception) {
-            Result.failure(workDataOf("error" to e.message ?: "Unknown error"))
+            Result.failure(workDataOf("error" to (e.message ?: "Unknown error")))
         }
     }
 }

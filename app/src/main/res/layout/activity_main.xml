@@ -1,128 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hail of Blades"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:layout_gravity="center"
-            android:paddingBottom="16dp" />
+            android:textColor="@color/accentRune"
+            android:paddingBottom="24dp" />
 
-        <TextView
-            android:text="توکن گیت‌هاب"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/tokenInput"
+        <!-- کارت تنظیمات -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="ghp_..." />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardElevation="4dp">
 
-        <TextView
-            android:text="مالک مخزن (خالی بماند اگر نمی‌دانید)"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-        <EditText
-            android:id="@+id/ownerInput"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="تنظیمات"
+                    android:textColor="@color/accentRune"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView android:text="توکن گیت‌هاب" android:textColor="@color/textSecondary"/>
+                <EditText
+                    android:id="@+id/tokenInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="ghp_..."
+                    android:textColor="@color/textPrimary"
+                    android:hintTextColor="@color/textSecondary"/>
+
+                <TextView android:text="مالک ریپازیتوری" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
+                <EditText
+                    android:id="@+id/ownerInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/textPrimary"/>
+
+                <TextView android:text="نام ریپازیتوری" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
+                <EditText
+                    android:id="@+id/repoInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="directandyt"
+                    android:textColor="@color/textPrimary"/>
+
+                <TextView android:text="پروکسی (اختیاری)" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
+                <EditText
+                    android:id="@+id/proxyInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="http://proxy:8080"
+                    android:textColor="@color/textPrimary"/>
+
+                <Button
+                    android:id="@+id/saveSettingsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ذخیره تنظیمات"
+                    android:layout_marginTop="12dp"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    app:strokeColor="@color/accentRune"
+                    android:textColor="@color/accentRune"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- کارت دانلود -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/surface">
 
-        <TextView
-            android:text="نام مخزن"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-        <EditText
-            android:id="@+id/repoInput"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:text="دانلود فایل"
+                    android:textColor="@color/accentRune"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView android:text="آدرس فایل (URL)" android:textColor="@color/textSecondary"/>
+                <EditText
+                    android:id="@+id/urlInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="https://..."
+                    android:textColor="@color/textPrimary"/>
+
+                <TextView android:text="نام فایل خروجی (اختیاری)" android:textColor="@color/textSecondary" android:layout_marginTop="12dp"/>
+                <EditText
+                    android:id="@+id/filenameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="مثال: myvideo.mp4 — حتماً پسوند را وارد کنید"
+                    android:textColor="@color/textPrimary"/>
+
+                <Button
+                    android:id="@+id/startButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="شروع دانلود"
+                    android:layout_marginTop="12dp"
+                    style="@style/Widget.Material3.Button"
+                    android:backgroundTint="@color/accentRune"/>
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/logText"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@color/background"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:gravity="top"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginTop="12dp" />
+
+                <Button
+                    android:id="@+id/clearLogButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="پاک کردن لاگ"
+                    android:layout_gravity="end"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:textColor="@color/textSecondary"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- کارت مدیریت پوشه‌ها -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="directandyt" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/surface">
 
-        <TextView
-            android:text="پروکسی (اختیاری، مثال: http://proxy:8080)"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-        <EditText
-            android:id="@+id/proxyInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="در صورت نیاز وارد کنید" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:text="آدرس فایل (URL)"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
-        <EditText
-            android:id="@+id/urlInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="https://..." />
+                <Button
+                    android:id="@+id/manageFoldersButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="مدیریت پوشه‌های قدیمی در ریپازیتوری"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    app:strokeColor="@color/accentRune"
+                    android:textColor="@color/accentRune"/>
 
-        <TextView
-            android:text="نام فایل خروجی (اختیاری)"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-        <EditText
-            android:id="@+id/filenameInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="مثال: myvideo.mp4 — حتماً پسوند (format) را وارد کنید" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="شروع دانلود"
-            android:layout_marginTop="16dp" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/logText"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#f0f0f0"
-            android:padding="8dp"
-            android:scrollbars="vertical"
-            android:gravity="top"
-            android:layout_marginTop="16dp" />
-
-        <Button
-            android:id="@+id/clearLogButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="پاک کردن لاگ"
-            android:layout_gravity="end" />
-
-        <!-- Bottom links -->
+        <!-- لینک‌های پایین -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:padding="8dp">
 
             <TextView
@@ -132,23 +207,22 @@
                 android:text="📱 @Hailofblades"
                 android:textColor="#0088cc"
                 android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true" />
+                android:clickable="true" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="  |  " />
+                android:text="  |  "
+                android:textColor="@color/textSecondary"/>
 
             <TextView
                 android:id="@+id/githubLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🐙 GitHub"
-                android:textColor="#333333"
+                android:textColor="#AAAAAA"
                 android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true" />
+                android:clickable="true" />
         </LinearLayout>
 
     </LinearLayout>

@@ -15,30 +15,29 @@
             android:layout_height="wrap_content"
             android:text="Hail of Blades"
             android:textSize="28sp"
-            android:layout_gravity="center"
-            android:paddingBottom="24dp" />
+            android:layout_gravity="center" />
 
-        <TextView android:text="توکن گیت‌هاب" />
+        <TextView android:text="GitHub Token" />
         <EditText
             android:id="@+id/tokenInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
 
-        <TextView android:text="مالک ریپازیتوری" android:layout_marginTop="12dp" />
+        <TextView android:text="Repo Owner" android:layout_marginTop="12dp" />
         <EditText
             android:id="@+id/ownerInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView android:text="نام ریپازیتوری" android:layout_marginTop="12dp" />
+        <TextView android:text="Repo Name" android:layout_marginTop="12dp" />
         <EditText
             android:id="@+id/repoInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="directandyt" />
 
-        <TextView android:text="پروکسی (اختیاری)" android:layout_marginTop="12dp" />
+        <TextView android:text="Proxy (optional)" android:layout_marginTop="12dp" />
         <EditText
             android:id="@+id/proxyInput"
             android:layout_width="match_parent"
@@ -49,27 +48,27 @@
             android:id="@+id/saveSettingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ذخیره تنظیمات"
+            android:text="Save Settings"
             android:layout_marginTop="12dp" />
 
-        <TextView android:text="آدرس فایل (URL)" android:layout_marginTop="24dp" />
+        <TextView android:text="File URL" android:layout_marginTop="24dp" />
         <EditText
             android:id="@+id/urlInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView android:text="نام فایل خروجی (اختیاری)" android:layout_marginTop="12dp" />
+        <TextView android:text="Output Filename (optional)" android:layout_marginTop="12dp" />
         <EditText
             android:id="@+id/filenameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="مثال: myvideo.mp4" />
+            android:hint="e.g., myfile.mp4" />
 
         <Button
             android:id="@+id/startButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="شروع دانلود"
+            android:text="Start Download"
             android:layout_marginTop="16dp" />
 
         <ProgressBar
@@ -93,14 +92,14 @@
             android:id="@+id/clearLogButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="پاک کردن لاگ"
+            android:text="Clear Log"
             android:layout_gravity="end" />
 
         <Button
             android:id="@+id/manageFoldersButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="مدیریت پوشه‌های قدیمی در ریپازیتوری"
+            android:text="Manage Old Folders"
             android:layout_marginTop="16dp" />
 
         <LinearLayout
@@ -114,18 +113,18 @@
                 android:id="@+id/telegramLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📱 @Hailofblades"
+                android:text="@Hailofblades"
                 android:textColor="#0088cc"
                 android:padding="8dp"
                 android:clickable="true" />
 
-            <TextView android:text="  |  " />
+            <TextView android:text=" | " />
 
             <TextView
                 android:id="@+id/githubLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🐙 GitHub"
+                android:text="GitHub"
                 android:textColor="#AAAAAA"
                 android:padding="8dp"
                 android:clickable="true" />

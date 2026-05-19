@@ -6,7 +6,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.card.MaterialCardView
-import com.soheil.hailofblades.models.GitHubContentItem   // ← اضافه شد
+import com.soheil.hailofblades.models.GitHubContentItem
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -87,7 +87,8 @@ class FolderManagerActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply { bottomMargin = 12 }
-                setCardCornerRadius(12f)   // ← جایگزین cardCornerRadius
+                // استفاده از property cardCornerRadius
+                cardCornerRadius = 12f
                 setCardBackgroundColor(getColor(R.color.surface))
             }
             val innerLayout = LinearLayout(this).apply {

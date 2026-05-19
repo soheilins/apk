@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04   # ← change to 22.04 (Jammy)
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,8 +23,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          buildozer init
-          buildozer -v android debug
+          buildozer -v android debug   # ← no buildozer init
 
       - name: Upload APK to artifacts
         uses: actions/upload-artifact@v4

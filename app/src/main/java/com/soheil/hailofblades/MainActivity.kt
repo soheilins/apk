@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var filenameInput: EditText
     private lateinit var startButton: Button
     private lateinit var saveSettingsButton: Button
-    private lateinit var manageFoldersButton: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var logText: TextView
     private lateinit var prefs: SharedPreferences
@@ -45,72 +44,51 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        try {
-            setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
-            tokenInput = findViewById(R.id.tokenInput)
-            ownerInput = findViewById(R.id.ownerInput)
-            repoInput = findViewById(R.id.repoInput)
-            proxyInput = findViewById(R.id.proxyInput)
-            urlInput = findViewById(R.id.urlInput)
-            filenameInput = findViewById(R.id.filenameInput)
-            startButton = findViewById(R.id.startButton)
-            saveSettingsButton = findViewById(R.id.saveSettingsButton)
-            manageFoldersButton = findViewById(R.id.manageFoldersButton)
-            progressBar = findViewById(R.id.progressBar)
-            logText = findViewById(R.id.logText)
-            val clearLogButton = findViewById<Button>(R.id.clearLogButton)
-            val telegramLink = findViewById<TextView>(R.id.telegramLink)
-            val githubLink = findViewById<TextView>(R.id.githubLink)
+        tokenInput = findViewById(R.id.tokenInput)
+        ownerInput = findViewById(R.id.ownerInput)
+        repoInput = findViewById(R.id.repoInput)
+        proxyInput = findViewById(R.id.proxyInput)
+        urlInput = findViewById(R.id.urlInput)
+        filenameInput = findViewById(R.id.filenameInput)
+        startButton = findViewById(R.id.startButton)
+        saveSettingsButton = findViewById(R.id.saveSettingsButton)
+        progressBar = findViewById(R.id.progressBar)
+        logText = findViewById(R.id.logText)
+        val clearLogButton = findViewById<Button>(R.id.clearLogButton)
+        val telegramLink = findViewById<TextView>(R.id.telegramLink)
+        val githubLink = findViewById<TextView>(R.id.githubLink)
 
-            logText.movementMethod = ScrollingMovementMethod()
-            prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            loadSavedSettings()
+        logText.movementMethod = ScrollingMovementMethod()
+        prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        loadSavedSettings()
 
-            clearLogButton.setOnClickListener { logText.text = "" }
+        clearLogButton.setOnClickListener { logText.text = "" }
 
-            telegramLink.setOnClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Hailofblades")))
-            }
-            githubLink.setOnClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soheilditf5-svg")))
-            }
-
-            saveSettingsButton.setOnClickListener { saveSettings() }
-
-            startButton.setOnClickListener {
-                val url = urlInput.text.toString().trim()
-                if (url.isEmpty()) {
-                    log("لطفاً آدرس فایل را وارد کنید", true)
-                    return@setOnClickListener
-                }
-                if (!hasStoragePermission()) {
-                    requestStoragePermission()
-                    return@setOnClickListener
-                }
-                startDownload()
-            }
-
-            manageFoldersButton.setOnClickListener {
-                val token = tokenInput.text.toString().trim()
-                val owner = ownerInput.text.toString().trim()
-                val repo = repoInput.text.toString().trim()
-                if (token.isEmpty() || owner.isEmpty() || repo.isEmpty()) {
-                    log("لطفاً توکن، مالک و نام ریپازیتوری را تنظیم کنید", true)
-                    return@setOnClickListener
-                }
-                val intent = Intent(this, FolderManagerActivity::class.java)
-                intent.putExtra("token", token)
-                intent.putExtra("owner", owner)
-                intent.putExtra("repo", repo)
-                startActivity(intent)
-            }
-
-            checkPermissions()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, "خطا در راه‌اندازی: ${e.message}", Toast.LENGTH_LONG).show()
+        telegramLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Hailofblades")))
         }
+        githubLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soheilditf5-svg")))
+        }
+
+        saveSettingsButton.setOnClickListener { saveSettings() }
+
+        startButton.setOnClickListener {
+            val url = urlInput.text.toString().trim()
+            if (url.isEmpty()) {
+                log("لطفاً آدرس فایل را وارد کنید", true)
+                return@setOnClickListener
+            }
+            if (!hasStoragePermission()) {
+                requestStoragePermission()
+                return@setOnClickListener
+            }
+            startDownload()
+        }
+
+        checkPermissions()
     }
 
     private fun loadSavedSettings() {

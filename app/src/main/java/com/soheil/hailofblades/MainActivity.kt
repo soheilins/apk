@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var urlInput: EditText
     private lateinit var filenameInput: EditText
     private lateinit var startButton: Button
+    private lateinit var saveSettingsButton: Button
+    private lateinit var manageFoldersButton: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var logText: TextView
     private lateinit var prefs: SharedPreferences
@@ -52,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         urlInput = findViewById(R.id.urlInput)
         filenameInput = findViewById(R.id.filenameInput)
         startButton = findViewById(R.id.startButton)
+        saveSettingsButton = findViewById(R.id.saveSettingsButton)
+        manageFoldersButton = findViewById(R.id.manageFoldersButton)
         progressBar = findViewById(R.id.progressBar)
         logText = findViewById(R.id.logText)
         val clearLogButton = findViewById<Button>(R.id.clearLogButton)
@@ -65,17 +69,15 @@ class MainActivity : AppCompatActivity() {
         clearLogButton.setOnClickListener { logText.text = "" }
 
         telegramLink.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Hailofblades"))
-            startActivity(intent)
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Hailofblades")))
+        }
+        githubLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soheilditf5-svg")))
         }
 
-        githubLink.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/soheilditf5-svg"))
-            startActivity(intent)
-        }
+        saveSettingsButton.setOnClickListener { saveSettings() }
 
         startButton.setOnClickListener {
-            saveSettings()
             val url = urlInput.text.toString().trim()
             if (url.isEmpty()) {
                 log("لطفاً آدرس فایل را وارد کنید", true)
@@ -88,12 +90,27 @@ class MainActivity : AppCompatActivity() {
             startDownload()
         }
 
+        manageFoldersButton.setOnClickListener {
+            val token = tokenInput.text.toString().trim()
+            val owner = ownerInput.text.toString().trim()
+            val repo = repoInput.text.toString().trim()
+            if (token.isEmpty() || owner.isEmpty() || repo.isEmpty()) {
+                log("لطفاً توکن، مالک و نام ریپازیتوری را تنظیم کنید", true)
+                return@setOnClickListener
+            }
+            val intent = Intent(this, FolderManagerActivity::class.java)
+            intent.putExtra("token", token)
+            intent.putExtra("owner", owner)
+            intent.putExtra("repo", repo)
+            startActivity(intent)
+        }
+
         checkPermissions()
     }
 
     private fun loadSavedSettings() {
         tokenInput.setText(prefs.getString(KEY_TOKEN, ""))
-        ownerInput.setText(prefs.getString(KEY_OWNER, ""))   // empty by default
+        ownerInput.setText(prefs.getString(KEY_OWNER, ""))
         repoInput.setText(prefs.getString(KEY_REPO, "directandyt"))
         proxyInput.setText(prefs.getString(KEY_PROXY, ""))
     }
@@ -121,12 +138,10 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.addCategory(Intent.CATEGORY_DEFAULT)
                 intent.data = Uri.parse("package:$packageName")
                 startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE)
             } catch (e: Exception) {
-                val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE)
+                startActivityForResult(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION), REQUEST_CODE_MANAGE_STORAGE)
             }
         } else {
             ActivityCompat.requestPermissions(this,
@@ -138,31 +153,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_CODE_MANAGE_STORAGE && grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 log("دسترسی به حافظه داده شد", false)
-            } else {
-                log("دسترسی به حافظه رد شد – نمی‌توان فایل را ذخیره کرد", true)
-            }
+            else
+                log("دسترسی به حافظه رد شد", true)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
-            if (hasStoragePermission()) {
-                log("دسترسی کامل به حافظه داده شد", false)
-            } else {
-                log("دسترسی به حافظه رد شد – لطفاً اجازه دهید", true)
-            }
+            if (hasStoragePermission()) log("دسترسی کامل به حافظه داده شد", false)
+            else log("دسترسی به حافظه رد شد", true)
         }
     }
 
     private fun checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
         }
     }
 
@@ -175,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         val customFilename = filenameInput.text.toString().trim()
 
         if (token.isEmpty() || owner.isEmpty() || repo.isEmpty()) {
-            log("لطفاً توکن، مالک و نام مخزن را وارد کنید", true)
+            log("لطفاً توکن، مالک و نام ریپازیتوری را وارد کنید", true)
             return
         }
 
@@ -220,35 +229,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun log(msg: String, isError: Boolean) {
-        val prefix = if (isError) "❌ " else "✓ "
         runOnUiThread {
-            logText.append("$prefix$msg\n")
-            val scrollView = logText.parent as? android.widget.ScrollView
-            scrollView?.fullScroll(View.FOCUS_DOWN)
+            logText.append("${if (isError) "❌ " else "✓ "}$msg\n")
+            (logText.parent as? android.widget.ScrollView)?.fullScroll(View.FOCUS_DOWN)
         }
     }
 
     private fun sendNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                showNotification()
-            }
-        } else {
-            showNotification()
-        }
-    }
-
-    private fun showNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = android.app.NotificationChannel("download_channel", "Downloads", android.app.NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(android.app.NotificationChannel("download_channel", "Downloads", android.app.NotificationManager.IMPORTANCE_DEFAULT))
         }
-        val notification = androidx.core.app.NotificationCompat.Builder(this, "download_channel")
+        notificationManager.notify(1, androidx.core.app.NotificationCompat.Builder(this, "download_channel")
             .setContentTitle("HOB")
             .setContentText("دانلود فایل با موفقیت انجام شد!")
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
-            .build()
-        notificationManager.notify(1, notification)
+            .build())
     }
 }

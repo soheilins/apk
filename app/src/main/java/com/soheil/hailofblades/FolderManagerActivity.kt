@@ -87,8 +87,7 @@ class FolderManagerActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply { bottomMargin = 12 }
-                // استفاده از property cardCornerRadius
-                cardCornerRadius = 12f
+                radius = 12f   // ✅ درست – گوشه‌های گرد
                 setCardBackgroundColor(getColor(R.color.surface))
             }
             val innerLayout = LinearLayout(this).apply {

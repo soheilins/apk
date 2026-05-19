@@ -14,7 +14,6 @@ import java.io.FileOutputStream
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.zip.ZipFile
-import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 
@@ -31,7 +30,6 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
 
             setProgress(Data.Builder().putInt("progress", 0).build())
 
-            // 1. Build Retrofit client (with optional proxy)
             val okHttpBuilder = OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()
@@ -56,11 +54,9 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 .build()
             val api = retrofit.create(GitHubApi::class.java)
 
-            // 2. Generate folder name (timestamp)
             val folderName = java.text.SimpleDateFormat("MMddHHmmss", java.util.Locale.getDefault()).format(java.util.Date())
             setProgress(Data.Builder().putInt("progress", 5).build())
 
-            // 3. Trigger workflow
             val dispatchBody = WorkflowDispatchRequest("main", mapOf("file_url" to fileUrl, "folder_name" to folderName))
             val dispatchResponse = api.triggerWorkflow(owner, repo, "download-split.yml", dispatchBody)
             if (!dispatchResponse.isSuccessful) {
@@ -68,10 +64,9 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
             }
             setProgress(Data.Builder().putInt("progress", 10).build())
 
-            // 4. Wait for _complete.txt
             var originalFilename = "reassembled.bin"
             var completed = false
-            repeat(180) { attempt -> // 30 min max (10s * 180)
+            repeat(180) { attempt ->
                 if (!isActive) return@withContext Result.failure(workDataOf("error" to "Cancelled"))
                 val content = api.getFileContent(owner, repo, "$folderName/_complete.txt")
                 if (content.isSuccessful && content.body() != null) {
@@ -92,7 +87,6 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
 
             setProgress(Data.Builder().putInt("progress", 80).build())
 
-            // 5. Download repo ZIP
             val zipResponse = api.downloadRepoZip(owner, repo)
             if (!zipResponse.isSuccessful) return@withContext Result.failure(workDataOf("error" to "Failed to download repo"))
             val tempZip = File(applicationContext.cacheDir, "repo.zip")
@@ -102,7 +96,6 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 }
             }
 
-            // 6. Extract and reassemble
             val extractDir = File(applicationContext.cacheDir, "extracted")
             extractDir.mkdirs()
             ZipFile(tempZip).use { zip ->
@@ -117,7 +110,6 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 }
             }
 
-            // Find chunks folder
             val chunksDir = extractDir.walk().firstOrNull { it.isDirectory && it.name == folderName && File(it, "chunks").exists() }
                 ?.let { File(it, "chunks") } ?: return@withContext Result.failure(workDataOf("error" to "Chunks folder not found"))
 
@@ -125,6 +117,7 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 ?.sortedBy { it.name.substringAfter("_").substringBefore(".").toInt() } ?: return@withContext Result.failure(workDataOf("error" to "No chunk files"))
 
             val finalName = if (customFilename.isNotBlank()) customFilename else originalFilename
+            // This points to the primary shared storage (internal storage, not removable SD card)
             val outputDir = File(Environment.getExternalStorageDirectory(), "hob_downloaded")
             outputDir.mkdirs()
             val outputFile = File(outputDir, finalName)
@@ -136,7 +129,6 @@ class DownloadWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(c
                 }
             }
 
-            // 7. Trigger delete workflow (optional, ignore failure)
             try {
                 api.triggerWorkflow(owner, repo, "delete-folder.yml", WorkflowDispatchRequest("main", mapOf("folder_name" to folderName)))
             } catch (e: Exception) { }
